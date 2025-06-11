@@ -45,7 +45,10 @@ fun FoodOrderingApp() {
         when (viewModel.paymentState) {
             PaymentState.SELECTING -> PaymentMethodDialog(viewModel)
             PaymentState.PROCESSING -> PaymentProcessingDialog()
-            PaymentState.SUCCESS -> PaymentSuccessDialog(viewModel)
+            PaymentState.SUCCESS -> PaymentSuccessDialog(
+                viewModel = viewModel,
+                paymentMethod = viewModel.selectedPaymentMethod  // ← CRITICAL: Use selectedPaymentMethod
+            )
             PaymentState.FAILED -> PaymentFailedDialog(viewModel)
             PaymentState.NONE -> Unit
         }

@@ -1,6 +1,5 @@
 package com.example.foodorderingapp.models
 
-
 import androidx.compose.runtime.*
 
 // =====================================================
@@ -200,6 +199,10 @@ class DemoFoodOrderingViewModel {
     var paymentState by mutableStateOf(PaymentState.NONE)
         private set
 
+    // ADD THIS: Track the selected payment method
+    var selectedPaymentMethod by mutableStateOf(PaymentMethod.CREDIT_CARD)
+        private set
+
     val cartTotal: Double
         get() = cartItems.sumOf { it.subtotal }
 
@@ -229,7 +232,9 @@ class DemoFoodOrderingViewModel {
         paymentState = PaymentState.NONE
     }
 
+    // UPDATED: Store the payment method
     fun processPayment(method: PaymentMethod) {
+        selectedPaymentMethod = method  // STORE THE PAYMENT METHOD FIRST!
         paymentState = PaymentState.PROCESSING
 
         android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
@@ -237,8 +242,7 @@ class DemoFoodOrderingViewModel {
 
             if (isSuccess) {
                 paymentState = PaymentState.SUCCESS
-                // REMOVED: Auto-clear cart and close dialog
-                // Now user must manually click "Back to Home" button
+                // selectedPaymentMethod is now stored and available
             } else {
                 paymentState = PaymentState.FAILED
             }
@@ -249,7 +253,6 @@ class DemoFoodOrderingViewModel {
         paymentState = PaymentState.SELECTING
     }
 
-    // Add this new function to DemoFoodOrderingViewModel class
     fun clearCartAndHidePayment() {
         cartItems = emptyList()  // Clear cart
         hidePayment()            // Close dialog

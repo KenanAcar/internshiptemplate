@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScrollablePage(viewModel: DemoFoodOrderingViewModel) {
+    val theme = LocalAppTheme.current  // Get current theme
     var searchText by remember { mutableStateOf("") }
     var selectedCategoryId by remember { mutableStateOf<Int?>(null) }
     var showSnackbar by remember { mutableStateOf(false) }
@@ -42,7 +43,7 @@ fun MainScrollablePage(viewModel: DemoFoodOrderingViewModel) {
                     duration = SnackbarDuration.Indefinite
                 )
             }
-            delay(800) // 0.75 seconds
+            delay(800)
             snackbarHostState.currentSnackbarData?.dismiss()
             showSnackbar = false
         }
@@ -51,7 +52,7 @@ fun MainScrollablePage(viewModel: DemoFoodOrderingViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFC680))
+            .background(theme.backgroundColor) // Use theme background
     ) {
         Column(
             modifier = Modifier
@@ -152,7 +153,6 @@ fun MainScrollablePage(viewModel: DemoFoodOrderingViewModel) {
                         product = product,
                         onAddToCart = {
                             viewModel.addToCart(product)
-                            // Show snackbar notification
                             snackbarMessage = "✅ ${product.pname} added to cart!"
                             showSnackbar = true
                         }
@@ -161,7 +161,7 @@ fun MainScrollablePage(viewModel: DemoFoodOrderingViewModel) {
             }
         }
 
-        // Shopping Cart Button - Bigger with Icon
+        // Shopping Cart Button with theme colors
         if (viewModel.cartItemCount > 0) {
             FloatingActionButton(
                 onClick = { viewModel.showCart() },
@@ -169,7 +169,7 @@ fun MainScrollablePage(viewModel: DemoFoodOrderingViewModel) {
                     .align(Alignment.BottomEnd)
                     .padding(16.dp)
                     .size(80.dp),
-                containerColor = Color(0xFFFF8C42)
+                containerColor = theme.primaryColor // Use theme primary color
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -188,12 +188,12 @@ fun MainScrollablePage(viewModel: DemoFoodOrderingViewModel) {
                     Icon(
                         imageVector = Icons.Default.ShoppingCart,
                         contentDescription = "Shopping Cart",
-                        tint = Color.White,
+                        tint = theme.textOnPrimary,
                         modifier = Modifier.size(28.dp)
                     )
                     Text(
                         text = "Cart",
-                        color = Color.White,
+                        color = theme.textOnPrimary,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -201,7 +201,7 @@ fun MainScrollablePage(viewModel: DemoFoodOrderingViewModel) {
             }
         }
 
-        // Snackbar Host
+        // Snackbar Host with theme success color
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier
@@ -210,7 +210,7 @@ fun MainScrollablePage(viewModel: DemoFoodOrderingViewModel) {
             snackbar = { snackbarData ->
                 Snackbar(
                     snackbarData = snackbarData,
-                    containerColor = Color(0xFF4CAF50), // Green success color
+                    containerColor = theme.successColor, // Use theme success color
                     contentColor = Color.White,
                     shape = RoundedCornerShape(8.dp)
                 )
@@ -225,11 +225,13 @@ fun CategoryButton(
     isSelected: Boolean,
     onClick: () -> Unit
 ) {
+    val theme = LocalAppTheme.current // Get current theme
+
     Button(
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (isSelected) Color(0xFFFF8C42) else Color.White,
-            contentColor = if (isSelected) Color.White else Color(0xFFFF8C42)
+            containerColor = if (isSelected) theme.primaryColor else Color.White,
+            contentColor = if (isSelected) theme.textOnPrimary else theme.primaryColor
         ),
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.height(40.dp),
@@ -248,12 +250,14 @@ fun ProductCard(
     product: Product,
     onAddToCart: () -> Unit
 ) {
+    val theme = LocalAppTheme.current // Get current theme
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onAddToCart() },
         colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFFF8C42)
+            containerColor = theme.cardColor // Use theme card color
         ),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -283,18 +287,18 @@ fun ProductCard(
             ) {
                 Text(
                     text = product.pname,
-                    color = Color.White,
+                    color = theme.textOnPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp
                 )
                 Text(
                     text = product.description,
-                    color = Color.White.copy(alpha = 0.9f),
+                    color = theme.textOnPrimary.copy(alpha = 0.9f),
                     fontSize = 12.sp
                 )
                 Text(
                     text = "${product.price} TL",
-                    color = Color.White,
+                    color = theme.textOnPrimary,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
                 )
